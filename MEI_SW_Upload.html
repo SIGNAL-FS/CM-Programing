@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEI UT Reload Checklist</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #e0e0e0;
+            --success: #28a745;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        /* --- ALERT BOX STYLES --- */
+        .alert-box {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            border-left: 10px solid #ff9800;
+            color: #856404;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .alert-box h3 {
+            margin-top: 0;
+            color: #d32f2f;
+            font-size: 1.5em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .alert-box p.main-note {
+            font-size: 1.3em;
+            margin: 15px 0;
+            font-weight: 800;
+            color: #000;
+        }
+
+        .alert-box .label-types {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .alert-box .badge {
+            background: #ffffff;
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 2px solid #ffc107;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        /* --- INFO BOX STYLES --- */
+        .info-box {
+            background-color: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-left: 10px solid #1976d2;
+            color: #0d47a1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .info-box h4 {
+            margin-top: 0;
+            color: #1565c0;
+            font-size: 1.2em;
+        }
+
+        .info-box .switch-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .info-box .switch-item {
+            background: #ffffff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid #2196f3;
+            font-weight: 600;
+            font-size: 1em;
+            color: #333;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .info-box .switch-item .location {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+            font-weight: normal;
+        }
+        /* ----------------------------- */
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: var(--primary);
+            background-color: #e9f2fb;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+            border-left: 5px solid var(--primary);
+        }
+
+        h3 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+
+        .checklist-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            transform: scale(1.4);
+            margin-right: 15px;
+            margin-top: 4px;
+            cursor: pointer;
+            accent-color: var(--success);
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1.05em;
+        }
+
+        .checklist-item input[type="checkbox"]:checked + label {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .code {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+        }
+
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #004494;
+        }
+
+        button.reset {
+            background-color: #dc3545;
+        }
+
+        button.reset:hover {
+            background-color: #c82333;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; padding: 0; }
+            .controls { display: none; }
+            .checklist-item { break-inside: avoid; }
+            h2 { background: none; border: 1px solid var(--primary); }
+            .alert-box { border: 2px solid #000; border-left: 10px solid #000; }
+            .info-box { border: 2px solid #000; border-left: 10px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- IMPORTANT NOTE AT THE TOP -->
+    <div class="alert-box">
+        <h3>️ Important Note ⚠️</h3>
+        <p class="main-note">CHECK FRONT LABEL before Starting Programming</p>
+        <div class="label-types">
+            <span class="badge">UT MEI M (Master)</span>
+            <span class="badge">UT MEI E (Slave)</span>
+        </div>
+        <p style="font-size: 0.9em; margin-top: 15px; color: #555;"><em>(Use this label to select the correct Local IP address in Table 4 below)</em></p>
+    </div>
+
+    <!-- POWER SWITCH LOCATION INFO -->
+    <div class="info-box">
+        <h4>📍 Power Switch Locations</h4>
+        <div class="switch-info">
+            <div class="switch-item">
+                UT Master Power Switch
+                <span class="location">📍 Right Side - Bottom</span>
+            </div>
+            <div class="switch-item">
+                UT Slave Power Switch
+                <span class="location">📍 Right Side - Middle</span>
+            </div>
+        </div>
+    </div>
+
+    <h1>MEI UT Reload & Software Install</h1>
+
+    <!-- PHASE 1 -->
+    <h2>Phase 1: Reset the MEI Machine (UT)</h2>
+    <p><em>Connect a monitor and keyboard to the machine to prepare it for the update.</em></p>
+
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-1">
+        <label for="p1-1">Connect monitor and keyboard to the MEI UT.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-2">
+        <label for="p1-2">Turn on the machine. Press <span class="highlight">F8</span> immediately to stop the startup process.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-3">
+        <label for="p1-3">When asked to run <span class="code">autoexec.bat</span>, press the letter <span class="highlight">O</span> (Yes).</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-4">
+        <label for="p1-4">When the typing prompt appears, press <span class="code">CTRL+C</span> then <span class="highlight">O</span> to stop it.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-5">
+        <label for="p1-5">Type <span class="code">cd net</span> and press Enter.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-6">
+        <label for="p1-6">Type <span class="code">copy setid.ori setid.bat</span> and press Enter (press <span class="highlight">O</span> to overwrite if asked).</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-7">
+        <label for="p1-7">Type <span class="code">edit setid.bat</span> and press Enter.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-8">
+        <label for="p1-8">Update the file parameters using the Reference Table below.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-9">
+        <label for="p1-9">Save & Exit: Press <span class="code">Alt+F</span>, select <span class="highlight">Quitter</span> (Quit), and press <span class="highlight">O</span> to save.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-10">
+        <label for="p1-10">Hold the power button for 5 seconds to turn off the machine.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p1-11">
+        <label for="p1-11">Unplug the monitor and keyboard.</label>
+    </div>
+
+    <!-- REFERENCE TABLE -->
+    <h3>📋 Reference Table 4: setid.bat Parameters</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>FTP_Server</td>
+                <td><strong>192.168.11.100</strong></td>
+                <td>Always use this IP</td>
+            </tr>
+            <tr>
+                <td>HW_Type</td>
+                <td><strong>NGHW</strong></td>
+                <td>Next Gen Hardware</td>
+            </tr>
+            <tr>
+                <td>Local_IP (UT MEI MA)</td>
+                <td>192.168.11.1</td>
+                <td><strong>Master (M)</strong></td>
+            </tr>
+            <tr>
+                <td>Local_IP (UT MEI MB)</td>
+                <td>192.168.11.3</td>
+                <td><strong>Master (M)</strong></td>
+            </tr>
+            <tr>
+                <td>Local_IP (UT MEI EA)</td>
+                <td>192.168.11.2</td>
+                <td><strong>Slave (E)</strong></td>
+            </tr>
+            <tr>
+                <td>Local_IP (UT MEI EB)</td>
+                <td>192.168.11.4</td>
+                <td><strong>Slave (E)</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PHASE 2 -->
+    <h2>Phase 2: Install Software via Maintenance Laptop</h2>
+    
+    <h3>Step 2.1: Prep the Laptop</h3>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-1">
+        <label for="p2-1">Open <span class="code">C:\inetpub\ftproot</span> on the laptop and delete any old files inside.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-2">
+        <label for="p2-2">Insert Maintenance CD. Click <span class="highlight">MEI</span>, then double-click the <span class="code">.exe</span> file for your specific station.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-3">
+        <label for="p2-3">Click through prompts: <span class="highlight">Next > Next > Oui > Install > Finish</span>.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-4">
+        <label for="p2-4"><strong>Verify:</strong> Check <span class="code">C:\inetpub\ftproot</span> to ensure the 4 new zipped files for your station are present.</label>
+    </div>
+
+    <h3>Step 2.2: Configure Laptop Network</h3>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-5">
+        <label for="p2-5">Go to Network Connections > Local Area Network > Properties > IPv4.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-6">
+        <label for="p2-6">Set IP Address: <span class="code">192.168.11.100</span></label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-7">
+        <label for="p2-7">Set Subnet Mask: <span class="code">255.255.255.0</span></label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-8">
+        <label for="p2-8">Leave Default Gateway <strong>empty/blank</strong>.</label>
+    </div>
+
+    <h3>Step 2.3: Start the Transfer</h3>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-9">
+        <label for="p2-9">Open <strong>Filezilla server</strong> on the desktop. Set Address to <span class="code">127.0.0.1</span> and Port to <span class="code">14147</span>. Click OK.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-10">
+        <label for="p2-10">Ensure the security USB dongle is plugged into the back of the MEI UT.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-11">
+        <label for="p2-11">Connect laptop to Ethernet switch, and connect the switch to the MEI UT.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-12">
+        <label for="p2-12">Turn on the MEI UT.</label>
+    </div>
+
+    <h3>Step 2.4: Finish Up</h3>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-13">
+        <label for="p2-13">Wait ~1 minute. Watch Filezilla until you see <span class="highlight">"Goodbye"</span> and <span class="highlight">"disconnected"</span>.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-13b">
+        <label for="p2-13b"><strong>Verify:</strong> View content to confirm correct IP address was programmed.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-14">
+        <label for="p2-14">Unplug the Ethernet cables and the switch.</label>
+    </div>
+    <div class="checklist-item">
+        <input type="checkbox" id="p2-15">
+        <label for="p2-15">Close Filezilla software. Job complete!</label>
+    </div>
+
+    <div class="controls">
+        <button onclick="window.print()">🖨️ Print Checklist</button>
+        <button class="reset" onclick="resetChecklist()">🔄 Reset All</button>
+    </div>
+</div>
+
+<script>
+    function resetChecklist() {
+        if(confirm("Are you sure you want to uncheck all boxes?")) {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+        }
+    }
+</script>
+
+</body>
+</html>
