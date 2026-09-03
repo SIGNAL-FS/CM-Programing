@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMI Remote Logs Viewing Checklist</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            background-color: #eaf2f8;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .checklist {
+            list-style-type: none;
+            padding: 0;
+        }
+        .checklist li {
+            background: #fff;
+            margin: 8px 0;
+            padding: 12px 15px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: flex-start;
+        }
+        .checklist input[type="checkbox"] {
+            margin-right: 15px;
+            margin-top: 4px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .checklist label {
+            cursor: pointer;
+            flex: 1;
+        }
+        .warning {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 5px solid #c62828;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-weight: bold;
+            border-radius: 0 5px 5px 0;
+        }
+        .info-box {
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: #d63384;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 15px;
+            background: #fff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #2980b9;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .zone-header {
+            background-color: #eaf2f8 !important;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        @media print {
+            body { background-color: #fff; }
+            .checklist li { box-shadow: none; border: 1px solid #ddd; }
+            .table-container { max-height: none; overflow-y: visible; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Guide to View PMI Logs Remotely</h1>
+    <p style="text-align: center; color: #7f8c8d;">Standard Operating Procedure Checklist</p>
+
+    <h2>1. Prerequisites</h2>
+    <ul class="checklist">
+        <li>
+            <input type="checkbox" id="pre1">
+            <label for="pre1">Obtain the <strong>Location</strong> of the PMI Fault (from MOC or ATS alarm logs).</label>
+        </li>
+        <li>
+            <input type="checkbox" id="pre2">
+            <label for="pre2">Obtain the exact <strong>Time</strong> of the PMI Fault.</label>
+        </li>
+    </ul>
+
+    <h2>2. Establish Remote Connection</h2>
+    <ul class="checklist">
+        <li>
+            <input type="checkbox" id="step1">
+            <label for="step1">Click <strong>"Start"</strong> on the ATS Workstation.</label>
+        </li>
+        <li>
+            <input type="checkbox" id="step2">
+            <label for="step2">Open <strong>"Remote Desktop Connection"</strong> (via Start menu or search bar).</label>
+        </li>
+        <li>
+            <input type="checkbox" id="step3">
+            <label for="step3">Type the location of the Data Recorder (DR) and click <strong>"Connect"</strong> (e.g., <code>new-dr</code>).<br>
+            <em>Note: DRs are only in ZC stations. For non-ZC stations, use the DR of the respective ZC.</em></label>
+        </li>
+        <li>
+            <input type="checkbox" id="step4">
+            <label for="step4">Login as <code>OPSadmin</code> (Password is the same as ATS OPSadmin Password).</label>
+        </li>
+        <li>
+            <input type="checkbox" id="step5">
+            <label for="step5">Click <strong>"Yes"</strong> on the certificate/security prompt to continue.</label>
+        </li>
+        <li>
+            <input type="checkbox" id="step6">
+            <label for="step6">Click <strong>"OK"</strong> to continue connecting.</label>
+        </li>
+    </ul>
+    
+    <div class="warning">
+        ⚠️ CRITICAL WARNING: You are now controlling the Data Recorder PC. <strong>DO NOT switch off or shut down this PC!</strong>
+    </div>
+
+    <h2>3. Navigate to Log Files</h2>
+    <ul class="checklist">
+        <li>
+            <input type="checkbox" id="step7">
+            <label for="step7">Open <strong>Disk D:</strong> on the remote computer.</label>
+        </li>
+        <li>
+            <input type="checkbox" id="step8">
+            <label for="step8">Double-click the <strong>"Trace"</strong> folder.</label>
+        </li>
+        <li>
+            <input type="checkbox" id="step9">
+            <label for="step9">Select the folder matching the date of the fault (<code>YYYY-MM-DD</code>).</label>
+        </li>
+    </ul>
+
+    <h2>4. Identify the Correct Log File & MESD Mapping</h2>
+    <div class="info-box">
+        <strong>File Naming Structure:</strong><br>
+        <code>YYYY-MM-DD-&lt;log start time&gt;-MEI&lt;MESD No.&gt;&lt;Master/Slave&gt;</code><br><br>
+        <strong>Master/Slave Codes:</strong> Master A: <code>AM</code> | Slave A: <code>AS</code> | Master B: <code>BM</code> | Slave B: <code>BS</code>
+    </div>
+
+    <ul class="checklist">
+        <li>
+            <input type="checkbox" id="step10a">
+            <label for="step10a">Refer to the <strong>PMI MESD Mapping Table</strong> below to find the correct <strong>MESD No.</strong> (Position in list) for the faulted station.</label>
+        </li>
+        <li>
+            <input type="checkbox" id="step10b">
+            <label for="step10b">Find the closest log timestamp <strong>before</strong> the fault time.</label>
+        </li>
+        <li>
+            <input type="checkbox" id="step10c">
+            <label for="step10c">Locate and open the specific file matching the naming structure and MESD/Slave/Master codes.</label>
+        </li>
+    </ul>
+
+    <!-- MESD Mapping Table -->
+    <h3 style="color: #2c3e50; margin-top: 25px;">📋 PMI MESD Mapping Reference</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Zone</th>
+                    <th>ATS MESD ID</th>
+                    <th>MESD No.</th>
+                    <th>Station</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Zone 1 -->
+                <tr class="zone-header"><td colspan="4">Zone 1</td></tr>
+                <tr><td>1</td><td>-</td><td>1</td><td>JUR NSL</td></tr>
+                <tr><td>1</td><td>PMIMESD2011</td><td>2</td><td>BBT</td></tr>
+                <tr><td>1</td><td>PMIMESD2012</td><td>3</td><td>BGB</td></tr>
+                
+                <!-- Zone 2 -->
+                <tr class="zone-header"><td colspan="4">Zone 2</td></tr>
+                <tr><td>2</td><td>-</td><td>1</td><td>YWT</td></tr>
+                <tr><td>2</td><td>PMIMESD2021</td><td>2</td><td>CCK</td></tr>
+                <tr><td>2</td><td>PMIMESD2022</td><td>3</td><td>KDO</td></tr>
+
+                <!-- Zone 3 -->
+                <tr class="zone-header"><td colspan="4">Zone 3</td></tr>
+                <tr><td>3</td><td>-</td><td>1</td><td>WDL</td></tr>
+                <tr><td>3</td><td>PMIMESD2031</td><td>2</td><td>KRJ</td></tr>
+                <tr><td>3</td><td>PMIMESD2032</td><td>3</td><td>MSL</td></tr>
+                <tr><td>3</td><td>PMIMESD2033</td><td>4</td><td>ADM</td></tr>
+
+                <!-- Zone 4 -->
+                <tr class="zone-header"><td colspan="4">Zone 4</td></tr>
+                <tr><td>4</td><td>-</td><td>1</td><td>YIS</td></tr>
+                <tr><td>4</td><td>PMIMESD2041</td><td>2</td><td>SBW</td></tr>
+                <tr><td>4</td><td>PMIMESD2042</td><td>3</td><td>KTB</td></tr>
+
+                <!-- Zone 5 -->
+                <tr class="zone-header"><td colspan="4">Zone 5</td></tr>
+                <tr><td>5</td><td>-</td><td>1</td><td>AMK</td></tr>
+                <tr><td>5</td><td>PMIMESD2051</td><td>2</td><td>SEL</td></tr>
+                <tr><td>5</td><td>PMIMESD2052</td><td>3</td><td>YCK</td></tr>
+
+                <!-- Zone 6 -->
+                <tr class="zone-header"><td colspan="4">Zone 6</td></tr>
+                <tr><td>6</td><td>-</td><td>1</td><td>TAP</td></tr>
+                <tr><td>6</td><td>PMIMESD2061</td><td>2</td><td>BSH</td></tr>
+                <tr><td>6</td><td>PMIMESD2062</td><td>3</td><td>BDL</td></tr>
+                <tr><td>6</td><td>PMIMESD2063</td><td>4</td><td>NOV</td></tr>
+
+                <!-- Zone 7 -->
+                <tr class="zone-header"><td colspan="4">Zone 7</td></tr>
+                <tr><td>7</td><td>-</td><td>1</td><td>NEW</td></tr>
+                <tr><td>7</td><td>PMIMESD2071</td><td>2</td><td>ORC</td></tr>
+                <tr><td>7</td><td>PMIMESD2072</td><td>3</td><td>SOM</td></tr>
+                <tr><td>7</td><td>PMIMESD2073</td><td>4</td><td>DBG</td></tr>
+                <tr><td>7</td><td>PMIMESD2074</td><td>5</td><td>CTH NSL</td></tr>
+
+                <!-- Zone 8 -->
+                <tr class="zone-header"><td colspan="4">Zone 8</td></tr>
+                <tr><td>8</td><td>-</td><td>1</td><td>MSP</td></tr>
+                <tr><td>8</td><td>PMIMESD2081</td><td>2</td><td>RFP NSL</td></tr>
+                <tr><td>8</td><td>PMIMESD2082</td><td>3</td><td>MRB</td></tr>
+
+                <!-- Zone 9 -->
+                <tr class="zone-header"><td colspan="4">Zone 9</td></tr>
+                <tr><td>9</td><td>-</td><td>1</td><td>PNR</td></tr>
+                <tr><td>9</td><td>PMIMESD2091</td><td>2</td><td>JKN</td></tr>
+                <tr><td>9</td><td>PMIMESD2092</td><td>3</td><td>BNL</td></tr>
+                <tr><td>9</td><td>PMIMESD2093</td><td>4</td><td>LKS</td></tr>
+
+                <!-- Zone 10 -->
+                <tr class="zone-header"><td colspan="4">Zone 10</td></tr>
+                <tr><td>10</td><td>-</td><td>1</td><td>DVR</td></tr>
+                <tr><td>10</td><td>PMIMESD2101</td><td>2</td><td>CLE</td></tr>
+                <tr><td>10</td><td>PMIMESD2102</td><td>3</td><td>BNV</td></tr>
+                <tr><td>10</td><td>PMIMESD2103</td><td>4</td><td>COM</td></tr>
+                <tr><td>10</td><td>PMIMESD2104</td><td>5</td><td>QUE</td></tr>
+
+                <!-- Zone 11 -->
+                <tr class="zone-header"><td colspan="4">Zone 11</td></tr>
+                <tr><td>11</td><td>-</td><td>1</td><td>OTP</td></tr>
+                <tr><td>11</td><td>PMIMESD2111</td><td>2</td><td>RDH</td></tr>
+                <tr><td>11</td><td>PMIMESD2112</td><td>3</td><td>TIB</td></tr>
+                <tr><td>11</td><td>PMIMESD2113</td><td>4</td><td>TPG</td></tr>
+                <tr><td>11</td><td>PMIMESD2114</td><td>5</td><td>RFP EWL</td></tr>
+
+                <!-- Zone 12 -->
+                <tr class="zone-header"><td colspan="4">Zone 12</td></tr>
+                <tr><td>12</td><td>-</td><td>1</td><td>KAL</td></tr>
+                <tr><td>12</td><td>PMIMESD2121</td><td>2</td><td>CTH EWL</td></tr>
+                <tr><td>12</td><td>PMIMESD2122</td><td>3</td><td>BGS</td></tr>
+                <tr><td>12</td><td>PMIMESD2123</td><td>4</td><td>LVR</td></tr>
+                <tr><td>12</td><td>PMIMESD2124</td><td>5</td><td>ALJ</td></tr>
+
+                <!-- Zone 13 -->
+                <tr class="zone-header"><td colspan="4">Zone 13</td></tr>
+                <tr><td>13</td><td>-</td><td>1</td><td>TNM</td></tr>
+                <tr><td>13</td><td>PMIMESD2131</td><td>2</td><td>EUN</td></tr>
+                <tr><td>13</td><td>PMIMESD2132</td><td>3</td><td>KEM</td></tr>
+                <tr><td>13</td><td>PMIMESD2133</td><td>4</td><td>BDK</td></tr>
+                <tr><td>13</td><td>PMIMESD2134</td><td>5</td><td>PYL</td></tr>
+
+                <!-- Zone 14 -->
+                <tr class="zone-header"><td colspan="4">Zone 14</td></tr>
+                <tr><td>14</td><td>-</td><td>1</td><td>PSR</td></tr>
+                <tr><td>14</td><td>PMIMESD2141</td><td>2</td><td>SIM</td></tr>
+                <tr><td>14</td><td>PMIMESD2142</td><td>3</td><td>TAM</td></tr>
+
+                <!-- Zone 15 -->
+                <tr class="zone-header"><td colspan="4">Zone 15</td></tr>
+                <tr><td>15</td><td>-</td><td>1</td><td>CGA</td></tr>
+                <tr><td>15</td><td>PMIMESD2151</td><td>2</td><td>XPO</td></tr>
+                <tr><td>15</td><td>PMIMESD2152</td><td>3</td><td>CGO</td></tr>
+
+                <!-- Zone 16 -->
+                <tr class="zone-header"><td colspan="4">Zone 16</td></tr>
+                <tr><td>16</td><td>-</td><td>1</td><td>TLK</td></tr>
+                <tr><td>16</td><td>PMIMESD2161</td><td>2</td><td>TWR</td></tr>
+
+                <!-- Zone 17 -->
+                <tr class="zone-header"><td colspan="4">Zone 17</td></tr>
+                <tr><td>17</td><td>-</td><td>1</td><td>GCL</td></tr>
+                <tr><td>17</td><td>PMIMESD2171</td><td>2</td><td>TCR</td></tr>
+
+                <!-- Zone 20 -->
+                <tr class="zone-header"><td colspan="4">Zone 20</td></tr>
+                <tr><td>20</td><td>-</td><td>1</td><td>JUR EWL</td></tr>
+                <tr><td>20</td><td>PMIMESD2201</td><td>2</td><td>CNG</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="info-box" style="margin-top: 20px;">
+        💡 <strong>Troubleshooting Tip:</strong> To narrow down the fault, search the log file for the keyword <code>"RESTART"</code> and analyze the alarm logs immediately before and after it.
+    </div>
+
+    <h2>5. Safe Exit Procedure</h2>
+    <ul class="checklist">
+        <li>
+            <input type="checkbox" id="exit1">
+            <label for="exit1">Click the <strong>"X" (Close button)</strong> on the Remote Desktop Connection blue bar at the top of the screen.</label>
+        </li>
+    </ul>
+    <div class="warning">
+        ⚠️ CRITICAL WARNING: <strong>DO NOT shutdown the PC</strong> via the Windows Start Menu! Only use the Remote Desktop close button.
+    </div>
+    <ul class="checklist">
+        <li>
+            <input type="checkbox" id="exit2">
+            <label for="exit2">Click <strong>"OK"</strong> on the confirmation prompt to exit the session.</label>
+        </li>
+    </ul>
+
+    <div class="footer">
+        <p>Based on "Guide to view PMI Logs Remotely v1" | Generated for ATS Operations</p>
+    </div>
+
+</body>
+</html>
