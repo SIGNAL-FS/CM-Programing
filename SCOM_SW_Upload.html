@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SCOM Setup Checklist (Mobile 9:16)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #e2e8f0;
+            color: var(--text);
+            line-height: 1.5;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* 9:16 Mobile Container */
+        .app-container {
+            width: 100%;
+            max-width: 450px; /* Approx 9:16 ratio base */
+            min-height: 100vh;
+            background: var(--bg);
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 16px 25px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* Sticky Progress Bar */
+        .progress-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-light);
+        }
+
+        .progress-bar {
+            background: var(--border);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Controls */
+        .controls {
+            padding: 12px 16px;
+            display: flex;
+            gap: 8px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-box {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            background: var(--bg);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Stats Grid */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 12px 16px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 10px 4px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.65rem;
+            margin-top: 2px;
+        }
+
+        /* Sections */
+        .section {
+            margin: 12px 16px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: var(--card-bg);
+            padding: 14px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-icon {
+            font-size: 1.1rem;
+        }
+
+        .section-badge {
+            background: var(--bg);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            transition: transform 0.3s;
+        }
+
+        .section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            padding: 12px;
+        }
+
+        .section-content.collapsed {
+            display: none;
+        }
+
+        /* Steps */
+        .step {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--bg);
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .step:active {
+            transform: scale(0.98);
+        }
+
+        .step.completed {
+            background: #ecfdf5;
+            border-color: var(--success);
+        }
+
+        .step-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .step.completed .step-checkbox {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .step-checkbox::after {
+            content: "✓";
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            opacity: 0;
+        }
+
+        .step.completed .step-checkbox::after {
+            opacity: 1;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .step.completed .step-number {
+            background: var(--success);
+        }
+
+        .step-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline;
+        }
+
+        .step.completed .step-text {
+            text-decoration: line-through;
+            color: var(--text-light);
+        }
+
+        .sub-steps {
+            margin-top: 8px;
+            margin-left: 30px;
+            padding-left: 10px;
+            border-left: 2px solid var(--border);
+        }
+
+        .sub-step {
+            padding: 4px 0;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .sub-step::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Notes */
+        .note {
+            background: #fffbeb;
+            border-left: 4px solid var(--warning);
+            padding: 10px 12px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.8rem;
+        }
+
+        .note.warning { background: #fef2f2; border-left-color: var(--danger); }
+        .note.info { background: #eff6ff; border-left-color: var(--primary); }
+
+        .note-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 0.8rem;
+        }
+
+        .note.info .note-title { color: var(--primary); }
+        .note.warning .note-title { color: var(--danger); }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            margin: 6px 0;
+            display: inline-block;
+        }
+
+        /* Folder List */
+        .folder-list {
+            background: white;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 8px;
+        }
+
+        .folder-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-family: monospace;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        /* Image Container */
+        .image-container {
+            margin: 12px 0;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: 8px;
+            text-align: center;
+            border: 1px dashed var(--border);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 6px;
+        }
+
+        .image-caption {
+            margin-top: 6px;
+            font-size: 0.7rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* Print */
+        @media print {
+            body { background: white; }
+            .app-container { box-shadow: none; max-width: 100%; }
+            .controls, .progress-sticky { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>🔧 SCOM Setup</h1>
+        <p class="subtitle">System Configuration Checklist</p>
+    </header>
+
+    <div class="progress-sticky">
+        <div class="progress-label">
+            <span>Overall Progress</span>
+            <span id="progressText">0 / 0</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search steps...">
+        <button class="icon-btn" onclick="expandAll()" title="Expand All">⬇️</button>
+        <button class="icon-btn" onclick="collapseAll()" title="Collapse All">⬆️</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-value" id="totalSteps">0</div>
+            <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="completedSteps">0</div>
+            <div class="stat-label">Done</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="remainingSteps">0</div>
+            <div class="stat-label">Left</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="percentComplete">0%</div>
+            <div class="stat-label">%</div>
+        </div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <div class="section-title">
+                <span class="section-icon">💾</span>
+                <span>1. Programming Dongle</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="section-badge">11 Steps</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+        </div>
+        <div class="section-content">
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">1</span><span class="step-text">Connect maintenance dongle to the FLMD using the Dongle Adapter</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">2</span><span class="step-text">Delete all files inside the maintenance dongle, ensure Dongle is empty before programming</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">3</span><span class="step-text">Copy the entire PMI folder of the target Zone to desktop and unzip</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">4</span><span class="step-text">Double-click on the <span class="code-block">autorun.exe</span> file</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">5</span><span class="step-text">Click on "ProDongle" button and click on "Program"</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">6</span><span class="step-text">Choose the drive letter where Maintenance Dongle is connected</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">7</span><span class="step-text">In MGM/SCOM Key Programming window, select target SCOM (SCOM_A or SCOM_B) and click "Program"</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">8</span><span class="step-text">Click "OK" when pop-up states "Key programming succeeded"</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">9</span><span class="step-text">Check inside the Dongle that a <span class="code-block">CIL.bin</span> file has been created</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">10</span><span class="step-text">Copy and paste the following folders into the dongle:<div class="folder-list"><div class="folder-item">📁 Step1 - SCOM Retrofit</div><div class="folder-item">📁 CONF_PMI_SGPR_ZC01_005-01</div></div></span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">11</span><span class="step-text">Safely eject the maintenance dongle</span></div></div>
+        </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <div class="section-title">
+                <span class="section-icon">🌐</span>
+                <span>2. SCOM LAN Setup</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="section-badge">7 Steps</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+        </div>
+        <div class="section-content">
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">1</span><span class="step-text">Go to <span class="code-block">D:\SCOM\unist000.exe</span> and double-click to remove previous config files. Select "Yes".</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">2</span><span class="step-text">Double-click Network Connections on Desktop. Go to View > Details > Status to list LAN ports.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">3</span><span class="step-text">Check disabled LAN ports:<div class="sub-steps"><div class="sub-step">LAN 2 – Not Used – Disabled</div><div class="sub-step">LAN 6, 7, 9 – Disabled</div></div></span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">4</span><span class="step-text">Other ports should show "Network cable unplugged":<div class="sub-steps"><div class="sub-step">LAN2 – InterSCOM 2 (Intel 82574L)</div><div class="sub-step">LAN2 – Not Used (Intel 8255xER #5)</div><div class="sub-step">LAN3 - NETP, LAN4 - LogFiles, LAN5 - DCS, LAN8 - InterSCOM</div></div></span></div></div>
+            
+            <div class="image-container">
+                <img src="network_connections.png" alt="Network Connections" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display:none; color:var(--danger); font-size:0.75rem;">⚠️ Save image as network_connections.png</div>
+                <div class="image-caption">Fig: Verify LAN 2 – Not Used (Disabled) & LAN 2 – InterSCOM 2 (Unplugged)</div>
+            </div>
+
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">5</span><span class="step-text"><strong>[If needed]</strong> If LAN2-InterSCOM 2 missing Intel 82574L:<div class="sub-steps"><div class="sub-step">Run <span class="code-block">Autorun.exe</span> in Step1 – SCOM Retrofit folder</div><div class="sub-step">If missing, run <span class="code-block">Intel PROSet 14-6.exe</span> from CPU board driver folder</div><div class="sub-step">Run <span class="code-block">Autorun.exe</span> in LAN folder</div><div class="sub-step">Run <span class="code-block">Driver installation – recover advanced tab.bat</span></div></div></span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">6</span><span class="step-text">Rename ports:<div class="sub-steps"><div class="sub-step">"LAN 2 – InterSCOM2" ➔ "LAN 2 – Not Used"</div><div class="sub-step">"LAN 1" ➔ "LAN 2 – InterSCOM 2"</div></div></span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">7</span><span class="step-text">Set Disable/Enable and refresh:<div class="sub-steps"><div class="sub-step">"LAN 2 – Not Used"  Disable</div><div class="sub-step">"LAN 2 – InterSCOM 2" ➔ Enable</div></div></span></div></div>
+        </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <div class="section-title">
+                <span class="section-icon"></span>
+                <span>3. Install Revenue SW</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="section-badge">20 Steps</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+        </div>
+        <div class="section-content">
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">1</span><span class="step-text">Install SCOM Revenue SW (on desktop) to update IP addresses.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">2</span><span class="step-text">Double-click <span class="code-block">autorun.exe</span> in PMI folder on Desktop.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">3</span><span class="step-text">Select "ProDongle".</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">4</span><span class="step-text">Check dongle drive letter (e.g., C:, D:, E:).</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">5</span><span class="step-text">Select drive and click "MGM/SCOM".</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">6</span><span class="step-text">Select desired zone and SCOM (A/B), click "Program".</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">7</span><span class="step-text">Click "Return" until back to starting page.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">8</span><span class="step-text">Select SCOM A or B, ensure right zone is selected.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">9</span><span class="step-text">If prompted (Fig 21), select "OK".</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">10</span><span class="step-text">Black command window appears (start of programming).</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">11</span><span class="step-text">If pop-up appears, click "ignore". Repeat for all.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">12</span><span class="step-text">Green command window appears (1-2 secs) = programmed.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">13</span><span class="step-text">Click "Quit". SCOM UT will auto-restart. If not, retry programming.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">14</span><span class="step-text">Do NOT close MS-DOS windows on start-up. Wallpaper will show.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">15</span><span class="step-text">Go to <span class="code-block">D:/SCOM</span>, open <span class="code-block">OutputSignature.txt</span>. Check first line CRC.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">16</span><span class="step-text">Verify CRC number with EMM/FE.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">17</span><span class="step-text">Check LAN 2 – InterSCOM 2 IPv4 Properties:<div class="sub-steps"><div class="sub-step"><strong>SCOM A:</strong> 10.10.18.2 / 255.255.255.0</div><div class="sub-step"><strong>SCOM B:</strong> 10.10.18.3 / 255.255.255.0</div></div></span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">18</span><span class="step-text">Verify LAN5 – DCS Advanced properties:<div class="sub-steps"><div class="sub-step">Duplex: Full-Duplex</div><div class="sub-step">Receive Buffers: 16</div><div class="sub-step">Speed: 10Mbps (100Mbps for TWD)</div><div class="sub-step">Transmit Control Block: 8</div></div></span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">19</span><span class="step-text">Disable all unused ports (LAN 2-Not Used, 6, 7, 9).</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-number">20</span><span class="step-text">Start >> Startup >> "Start SCOMX v02_32_02_XX". Ensure only latest version shows.</span></div></div>
+        </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <div class="section-title">
+                <span class="section-icon">⚠️</span>
+                <span>4. Troubleshooting</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="section-badge">Notes</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+        </div>
+        <div class="section-content">
+            <div class="note info">
+                <div class="note-title">🔧 Cannot access BIOS</div>
+                <p>Switch OFF UT (hold power 5s), switch ON. Immediately press <strong>DEL</strong> repeatedly while rebooting.</p>
+            </div>
+            <div class="note warning">
+                <div class="note-title">🚨 Dongle failed/error on boot</div>
+                <p>Modify CD drive to <span class="code-block">F:</span> via <span class="code-block">diskmgmt.msc</span>. Ensure dongle is seen on <span class="code-block">E:</span>.</p>
+            </div>
+            <div class="note">
+                <div class="note-title">⚡ UT does not switch on</div>
+                <p>1) Check rear power button. 2) Check power cord. 3) Check power point. 4) Replace UT if persists.</p>
+            </div>
+            
+            <div style="margin-top: 15px; font-weight: 700; font-size: 0.85rem; color: var(--primary);">🔐 Verify MD5 Checksum</div>
+            <div class="step" onclick="toggleStep(this)" style="margin-top: 8px;"><div class="step-checkbox"></div><div class="step-content"><span class="step-text">Press <strong>Win+R</strong>, type <span class="code-block">cmd</span>, press Enter.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-text">Type <span class="code-block">cd X:</span> (e.g., <span class="code-block">cd E:</span>) to access software CD path.</span></div></div>
+            <div class="step" onclick="toggleStep(this)"><div class="step-checkbox"></div><div class="step-content"><span class="step-text">Type <span class="code-block">certutil -hashfile bootmgr MD5</span> and compare hash.</span></div></div>
+        </div>
+    </div>
+
+    <div style="height: 40px;"></div>
+</div>
+
+<script>
+    function toggleSection(header) {
+        const content = header.nextElementSibling;
+        content.classList.toggle('collapsed');
+        header.classList.toggle('collapsed');
+    }
+
+    function toggleStep(step) {
+        step.classList.toggle('completed');
+        updateProgress();
+        saveState();
+    }
+
+    function updateProgress() {
+        const steps = document.querySelectorAll('.step');
+        const completed = document.querySelectorAll('.step.completed');
+        const total = steps.length;
+        const count = completed.length;
+        const percentage = Math.round((count / total) * 100);
+
+        document.getElementById('progressBar').style.width = percentage + '%';
+        document.getElementById('progressText').textContent = `${count} / ${total}`;
+        document.getElementById('totalSteps').textContent = total;
+        document.getElementById('completedSteps').textContent = count;
+        document.getElementById('remainingSteps').textContent = total - count;
+        document.getElementById('percentComplete').textContent = percentage + '%';
+
+        document.querySelectorAll('.section').forEach(section => {
+            const sectionSteps = section.querySelectorAll('.step');
+            const sectionCompleted = section.querySelectorAll('.step.completed');
+            const badge = section.querySelector('.section-badge');
+            if (badge && sectionSteps.length > 0) {
+                badge.textContent = `${sectionCompleted.length}/${sectionSteps.length}`;
+            }
+        });
+    }
+
+    function expandAll() {
+        document.querySelectorAll('.section-content').forEach(c => c.classList.remove('collapsed'));
+        document.querySelectorAll('.section-header').forEach(h => h.classList.remove('collapsed'));
+    }
+
+    function collapseAll() {
+        document.querySelectorAll('.section-content').forEach(c => c.classList.add('collapsed'));
+        document.querySelectorAll('.section-header').forEach(h => h.classList.add('collapsed'));
+    }
+
+    document.getElementById('searchBox').addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('.step').forEach(step => {
+            step.style.display = step.textContent.toLowerCase().includes(term) ? 'flex' : 'none';
+        });
+    });
+
+    function saveState() {
+        const state = Array.from(document.querySelectorAll('.step')).map(s => s.classList.contains('completed'));
+        localStorage.setItem('scomChecklistMobile', JSON.stringify(state));
+    }
+
+    function loadState() {
+        const saved = localStorage.getItem('scomChecklistMobile');
+        if (saved) {
+            const state = JSON.parse(saved);
+            document.querySelectorAll('.step').forEach((s, i) => {
+                if (state[i]) s.classList.add('completed');
+            });
+        }
+        updateProgress();
+    }
+
+    window.addEventListener('load', loadState);
+</script>
+
+</body>
+</html>
